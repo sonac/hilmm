@@ -1,0 +1,20 @@
+[package]
+name = "hilmm"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+dotenv = "0.15.0"
+rust-argon2 = "1.0"
+
+[dependencies.rocket]
+version = "0.5.0-rc.2"
+features = ["json", "secrets"]
+
+[dependencies.mongodb]
+version = "2.2.0"
+default-features = false
+features = ["sync"] 
