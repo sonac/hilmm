@@ -1,5 +1,4 @@
 use argon2::{self, Config};
-use mongodb::results::InsertOneResult;
 use rocket::{http::{Status, CookieJar, Cookie}, serde::json::Json, State};
 
 
@@ -12,7 +11,11 @@ fn hash_password(pwd: &String) -> String {
 }
 
 fn check_pwd(pwd: &String, hash: &String) -> bool {
-    argon2::verify_encoded(hash, pwd.as_bytes()).unwrap()
+    println!("{}", pwd);
+    println!("{}", hash);
+    let res = argon2::verify_encoded(hash, pwd.as_bytes()).unwrap();
+    println!("{}", res);
+    res
 }
 
 #[post("/signup", data = "<auth_info>")]
@@ -38,7 +41,7 @@ pub fn signup(
             cookies.add_private(Cookie::new("user_id", user_id));
             Ok(Json(String::from("success")))   
         }
-        None => Err(Status::InternalServerError),
+        None => Err(Status::BadRequest),
     }
 }
 
@@ -56,10 +59,14 @@ pub fn signin(
                 cookies.add_private(Cookie::new("user_id", user_id));
                 Ok(Json(user.email))
             } else {
+                println!("wrong password!");
                 Err(Status::BadRequest)
             }
         }
-        None => Err(Status::BadRequest)
+        None => {
+            println!("user is not found!");
+            Err(Status::BadRequest)
+        }
     }
 }
 
@@ -67,14 +74,14 @@ pub fn signin(
 pub fn validate(
     db: &State<MongoDB>,
     cookies: &CookieJar<'_>
-) -> Result<Json<String>, Status> {
+) -> Result<Json<User>, Status> {
     let maybe_user_id = cookies.get_private("user_id").map(|crumb| format!("{}", crumb.value()));
     match maybe_user_id {
         Some(user_id) => {
             let maybe_user = db.get_user_by_id(&user_id);
             match maybe_user {
                 Some(user) => {
-                    Ok(Json(user.email))
+                    Ok(Json(user))
                 }
                 None => Err(Status::BadRequest)
             }

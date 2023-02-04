@@ -340,6 +340,7 @@ checksum = "99d76085681585d39016f4d3841eb019201fc54d2dd0d92ad1e4fab3bfb32754"
 dependencies = [
  "ahash",
  "base64",
+ "chrono",
  "hex",
  "indexmap",
  "lazy_static",
@@ -929,6 +930,8 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
 name = "hilmm"
 version = "0.1.0"
 dependencies = [
+ "bson",
+ "chrono",
  "dotenv",
  "mongodb",
  "rocket",

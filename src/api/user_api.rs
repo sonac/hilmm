@@ -30,7 +30,7 @@ pub fn update_user(db: &State<MongoDB>, id: String, user: Json<User>) -> Result<
         pwd: String::new(),
         portfolio: empty_portfolio
     };
-    let upd_res = db.update_user(&id, data);
+    let upd_res = db.update_user(&data);
     match upd_res {
         Ok(upd) => {
             if upd.matched_count == 1 {
@@ -64,3 +64,4 @@ pub fn delete_user(db: &State<MongoDB>, id: String) -> Result<Json<&str>, Status
         Err(_) => Err(Status::InternalServerError),
     }
 }
+
