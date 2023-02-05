@@ -15,7 +15,7 @@ use crate::{
 };
 
 #[post("/asset", data = "<buy>")]
-pub fn add_buy(
+pub async fn add_buy(
     db: &State<MongoDB>,
     buy: Json<BuyInfo>,
     cookies: &CookieJar<'_>,
@@ -33,11 +33,12 @@ pub fn add_buy(
                     user.portfolio.buys.push(user_buy);
                     user.portfolio = user.portfolio.add_asset(user_asset);
                     println!("{:?}", user);
-                    let res = db.update_user(&user);
+                    let upd_user = user.refresh_assets().await;
+                    let res = db.update_user(&upd_user);
                     match res {
                         Ok(_) => {
                             println!("successfully updated user");
-                            Ok(Json(user))
+                            Ok(Json(upd_user))
                         }
                         Err(err) => {
                             println!("{} err occurred", err);
@@ -52,7 +53,7 @@ pub fn add_buy(
     }
 }
 
-fn fetch_price(_ticker: &String) -> f32 {
+fn fetch_price(_ticker: &String) -> f64 {
     0.0
 }
 

@@ -72,7 +72,6 @@ impl MongoDB {
                 None
             }
         }
-        //self.users.find_one(filter, None).ok().expect("Error fetching user by email from db")
     }
 
     pub fn update_user(&self, user: &User) -> Result<UpdateResult, Error> {

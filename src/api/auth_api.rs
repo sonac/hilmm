@@ -71,7 +71,7 @@ pub fn signin(
 }
 
 #[get("/validate")]
-pub fn validate(
+pub async fn validate(
     db: &State<MongoDB>,
     cookies: &CookieJar<'_>
 ) -> Result<Json<User>, Status> {
@@ -81,7 +81,18 @@ pub fn validate(
             let maybe_user = db.get_user_by_id(&user_id);
             match maybe_user {
                 Some(user) => {
-                    Ok(Json(user))
+                    let upd_user = user.refresh_assets().await;
+                    let res = db.update_user(&upd_user);
+                    match res {
+                        Ok(_) => {
+                            println!("successfully updated user");
+                            Ok(Json(upd_user))
+                        }
+                        Err(err) => {
+                            println!("{} err occurred", err);
+                            Err(Status::InternalServerError)
+                        }
+                    }
                 }
                 None => Err(Status::BadRequest)
             }
@@ -89,3 +100,4 @@ pub fn validate(
         None => Err(Status::Forbidden)
     }
 }
+
