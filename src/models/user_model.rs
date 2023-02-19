@@ -26,8 +26,8 @@ impl User {
             match price.await {
                 Some(p) => {
                     if p.option_chain.result.len() == 0 {
-                        println!("no price was fetched!");
-                        return self
+                        println!("no price in the result");
+                        continue
                     }
                     let price = p.option_chain.result[0].quote.regular_market_price;
                     self.portfolio.user_assets[idx].asset.price = price;
