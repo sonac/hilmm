@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  be:
+    image: hilmm
+    container_name: hilmm
+    restart: always
+    networks:
+      - hilmm-network
+    env_file:
+      - .dockerenv
+    ports:
+      - "8000:8000"
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: always
+    networks:
+      - hilmm-network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: snitch 
+    env_file:
+      - .dockerenv
+    volumes:
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - ./snitchData:/data/db
+    ports:
+      - "27017:27017"
+
+networks:
+  hilmm-network:
+    driver: bridge
