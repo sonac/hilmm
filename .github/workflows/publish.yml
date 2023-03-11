@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: build docker image
-        run: docker build . -t hilmm
+        run: docker buildx build --platform linux/arm,linux/arm64,linux/amd64/v8 . -t hilmm
       - name: push to github packages 
         uses: docker/build-push-action@v1
         with:
